@@ -8,17 +8,21 @@ type Task = {
 }
 
 function Todo() {
-	const initialTasks = [
-		{id: 1, title: 'Помыть машину', done: false},
-		{id: 2, title: 'Сходить за водой', done: true},
-		{id: 3, title: 'Сделать эксельку по проектированию', done: false},
-		{id: 4, title: 'Сходить в мфц', done: true},
-		{id: 5, title: 'Получить справку по состоянию здоровья', done: true},
-		{id: 6, title: 'Оформить стипендию', done: false},
-		{id: 7, title: 'Подписать все профбилеты', done: false},
-	];
+	const generateInitialTasks = () => {
+		// 1. как часто будут генерироваться задачи?
+		const initialTasks = [
+		  {id: 1, title: 'Помыть машину', done: false},
+		  {id: 2, title: 'Сходить за водой', done: true},
+		  {id: 3, title: 'Сделать эксельку по проектированию', done: false},
+		  {id: 4, title: 'Сходить в мфц', done: true},
+		  {id: 5, title: 'Получить справку по состоянию здоровья', done: true},
+		  {id: 6, title: 'Оформить стипендию', done: false},
+		  {id: 7, title: 'Подписать все профбилеты', done: false},
+		];
+		return initialTasks
+	  }
 
-	const [tasks, setTasks] = useState(initialTasks);
+	const [tasks, setTasks] = useState(generateInitialTasks);
 	const [addTask, setAddTask] = useState('')
 
 	const [editingTask, setEditingTask] = useState<number | null>(null);
@@ -27,10 +31,14 @@ function Todo() {
 	const [personalId, setPersonalId] = useState(tasks.length + 1)
 
 	const handleChangeDone = (taskId: number) => {
-		setTasks(tasks.map(task => 
+		// 2. на каждый Change Done асинхроно обращаемся к серверу
+		// сымитируем это с помощью setTimeout
+		setTimeout(() => {
+		  setTasks(tasks.map(task => 
 			task.id === taskId ? {...task, done: !task.done} : task
-		))
-	}
+		  ))
+		}, 1000)
+	  }
 
 	const handleAddTask = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -104,7 +112,6 @@ function Todo() {
 									<div className="editDiv"><button className="editBtn" onClick={() => handleSaveTask(task.id)}>Сохранить</button></div>
 									<div className="deleteDiv"><button className="deleteBtn" onClick={() => handleDeleteTask(task.id)}>Удалить</button></div>
 								</>
-								
 							)} 
 							
 						</li>
