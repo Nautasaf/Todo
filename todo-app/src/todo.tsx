@@ -86,7 +86,11 @@ function Todo() {
 							<div className="idDiv">{handlePersonalNumber(task)}</div>
 							{editingTask !== task.id ? (
 								<>
-									<div className="titleDiv">{task.title}</div>
+									{task.done ? (
+										<div className="titleDiv checked">{task.title}</div>
+									) : (
+										<div className="titleDiv">{task.title}</div>
+									)}
 									<div className="doneDiv"><input className="checkbox" type="checkbox" checked={task.done} onChange={() => handleChangeDone(task.id)} /></div>
 									<div className="editDiv"><button className="editBtn" onClick={() => handleEditTask(task.id)}>Изменить</button></div>
 									<div className="deleteDiv"><button className="deleteBtn" onClick={() => handleDeleteTask(task.id)}>Удалить</button></div>

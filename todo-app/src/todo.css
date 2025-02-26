@@ -81,3 +81,7 @@ li {
     border: 1px solid rgb(119, 231, 149);
     border-radius: 8px;
 }
+
+.checked {
+    text-decoration: line-through;
+}
