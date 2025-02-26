@@ -24,6 +24,8 @@ function Todo() {
 	const [editingTask, setEditingTask] = useState<number | null>(null);
 	const [editedTask, setEditedTask] = useState('');
 
+	const [personalId, setPersonalId] = useState(tasks.length + 1)
+
 	const handleChangeDone = (taskId: number) => {
 		setTasks(tasks.map(task => 
 			task.id === taskId ? {...task, done: !task.done} : task
@@ -35,11 +37,12 @@ function Todo() {
 		if (addTask === '') return;
 		
 		const newTask = {
-			id: tasks.length + 1,
+			id: personalId,
 			title: addTask,
 			done: false
 		}
 
+		setPersonalId(newTask.id + 1)
 		setTasks([...tasks, newTask]);
 		setAddTask('');
 	}
