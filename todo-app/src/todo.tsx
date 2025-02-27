@@ -31,12 +31,14 @@ function Todo() {
 	const [personalId, setPersonalId] = useState(tasks.length + 1)
 
 	const handleChangeDone = (taskId: number) => {
+		// Локально меняем состояние дела
+		setTasks(tasks.map(task => 
+			task.id === taskId ? {...task, done: !task.done} : task
+		))
 		// 2. на каждый Change Done асинхроно обращаемся к серверу
 		// сымитируем это с помощью setTimeout
 		setTimeout(() => {
-		  setTasks(tasks.map(task => 
-			task.id === taskId ? {...task, done: !task.done} : task
-		  ))
+		  // Тогда операции в БД будем прописывать тут
 		}, 1000)
 	  }
 
@@ -113,7 +115,6 @@ function Todo() {
 									<div className="deleteDiv"><button className="deleteBtn" onClick={() => handleDeleteTask(task.id)}>Удалить</button></div>
 								</>
 							)} 
-							
 						</li>
 					))}
 				</ul>
