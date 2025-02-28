@@ -1,12 +1,12 @@
-import Todo from './todo.tsx'
-import './App.css'
+import Todo from './todo.tsx';
+import './App.css';
 
 function App() {
   return (
     <>
       <Todo />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

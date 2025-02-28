@@ -1,87 +1,87 @@
 .todoContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 80%;
-    background-color: rgb(162, 245, 173);
-    border: 2px solid rgb(86, 225, 107);
-    border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  background-color: rgb(162, 245, 173);
+  border: 2px solid rgb(86, 225, 107);
+  border-radius: 10px;
 }
 
 button {
-    padding: 5px;
+  padding: 5px;
 }
 
 .addTaskForm {
-    width: 80%;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 80%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .addTaskInput {
-    width: 100%;
-    height: 35px;
-    font-size: 15px;
-    border: 2px solid rgb(86, 225, 107);
-    border-radius: 8px;
-    padding-left: 8px;
+  width: 100%;
+  height: 35px;
+  font-size: 15px;
+  border: 2px solid rgb(86, 225, 107);
+  border-radius: 8px;
+  padding-left: 8px;
 }
 
 .addTaskBtn {
-    padding: 0 10px;
-    position: absolute;
-    right: 5px;
-    height: 30px;
-    text-align: center;
-    border: 1px solid black;
+  padding: 0 10px;
+  position: absolute;
+  right: 5px;
+  height: 30px;
+  text-align: center;
+  border: 1px solid black;
 }
 
 ul {
-    font-size: 18px;
-    padding: 0;
-    width: 95%;
-    border: 2px solid rgb(119, 231, 149);
+  font-size: 18px;
+  padding: 0;
+  width: 95%;
+  border: 2px solid rgb(119, 231, 149);
 }
 
 li {
-    display: flex;
-    align-items: center;
-    list-style-type: none;
-    text-decoration: none;
-    border: 2px solid rgb(119, 231, 149);
+  display: flex;
+  align-items: center;
+  list-style-type: none;
+  text-decoration: none;
+  border: 2px solid rgb(119, 231, 149);
 }
 
 .idDiv {
-    width: 5%;
+  width: 5%;
 }
 
 .titleDiv {
-    display: flex;
-    justify-content: left;
-    width: 90%;
+  display: flex;
+  justify-content: left;
+  width: 90%;
 }
 
 .doneDiv {
-    width: 5%;
+  width: 5%;
 }
 
 .checkbox {
-    height: 20px;
-    width: 20px;
+  height: 20px;
+  width: 20px;
 }
 
 .editInput {
-    padding-left: 8px;
-    font-size: 18px;
-    height: 30px;
-    width: 90%;
-    border: 1px solid rgb(119, 231, 149);
-    border-radius: 8px;
+  padding-left: 8px;
+  font-size: 18px;
+  height: 30px;
+  width: 90%;
+  border: 1px solid rgb(119, 231, 149);
+  border-radius: 8px;
 }
 
 .checked {
-    text-decoration: line-through;
+  text-decoration: line-through;
 }
