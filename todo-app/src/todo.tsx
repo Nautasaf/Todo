@@ -14,32 +14,54 @@ const generateId = () => {
   return idCounter;
 };
 
+const generateInitialTasks = () => {
+  // 1. как часто будут генерироваться задачи?
+  const initialTasks = [
+    { id: generateId(), title: 'Помыть машину', done: false },
+    { id: generateId(), title: 'Сходить за водой', done: true },
+    {
+      id: generateId(),
+      title: 'Сделать эксельку по проектированию',
+      done: false,
+    },
+    { id: generateId(), title: 'Сходить в мфц', done: true },
+    {
+      id: generateId(),
+      title: 'Получить справку по состоянию здоровья',
+      done: true,
+    },
+    { id: generateId(), title: 'Оформить стипендию', done: false },
+    { id: generateId(), title: 'Подписать все профбилеты', done: false },
+  ];
+  return initialTasks;
+};
+
+// - добавь в проект eslint, styleint и prettier
+// - добавь команды в package.json что бы запускать проверки через команды (например, npm run lint:css)
+// - сделай так, что бы линт запускался каждый раз при коммите/пуше в репозиторий (husky или lefthook, выбирай в чем быстрее разберешься)
+// - создай еще одну папку закинь туда весь проект но не используй vite, используй webpack
+
+const useHandleAddTask = (inputNewTaskRef, setTasks, tasks) => {
+  return (e: React.FormEvent) => {
+    e.preventDefault();
+    const addTask = inputNewTaskRef.current?.value.trim();
+    if (!addTask) return;
+
+    const newTask = {
+      id: generateId(),
+      title: addTask,
+      done: false,
+    };
+
+    setTasks([...tasks, newTask]);
+    if (inputNewTaskRef.current) inputNewTaskRef.current.value = '';
+  };
+};
+
 function Todo() {
   const inputNewTaskRef = useRef<HTMLInputElement>(null);
 
-  const generateInitialTasks = () => {
-    // 1. как часто будут генерироваться задачи?
-    const initialTasks = [
-      { id: generateId(), title: 'Помыть машину', done: false },
-      { id: generateId(), title: 'Сходить за водой', done: true },
-      {
-        id: generateId(),
-        title: 'Сделать эксельку по проектированию',
-        done: false,
-      },
-      { id: generateId(), title: 'Сходить в мфц', done: true },
-      {
-        id: generateId(),
-        title: 'Получить справку по состоянию здоровья',
-        done: true,
-      },
-      { id: generateId(), title: 'Оформить стипендию', done: false },
-      { id: generateId(), title: 'Подписать все профбилеты', done: false },
-    ];
-    return initialTasks;
-  };
-
-  const [tasks, setTasks] = useState(generateInitialTasks);
+  const [tasks, setTasks] = useState(() => generateInitialTasks());
 
   const [editingTask, setEditingTask] = useState<number | null>(null);
   const [editedTask, setEditedTask] = useState('');
@@ -47,16 +69,15 @@ function Todo() {
   const handleChangeDone = useCallback(
     (taskId: number) => {
       // Локально меняем состояние дела
-      setTasks(
-        tasks.map((task) =>
-          task.id === taskId ? { ...task, done: !task.done } : task,
-        ),
-      );
       // 2. на каждый Change Done асинхроно обращаемся к серверу
       // сымитируем это с помощью setTimeout
       setTimeout(() => {
-        // Тогда операции в БД будем прописывать тут
-      }, 1000);
+        setTasks((prevState) =>
+          prevState.map((task) =>
+            task.id === taskId ? { ...task, done: !task.done } : task,
+          ),
+        );
+      }, 10000);
     },
     [tasks],
   );
@@ -65,23 +86,24 @@ function Todo() {
     return tasks.indexOf(task) + 1;
   };
 
-  const handleAddTask = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      const addTask = inputNewTaskRef.current?.value.trim();
-      if (!addTask) return;
+  const handleAddTask = useHandleAddTask(inputNewTaskRef, setTasks, tasks);
+  // const handleAddTask = useCallback(
+  //   (e: React.FormEvent) => {
+  //     e.preventDefault();
+  //     const addTask = inputNewTaskRef.current?.value.trim();
+  //     if (!addTask) return;
 
-      const newTask = {
-        id: generateId(),
-        title: addTask,
-        done: false,
-      };
+  //     const newTask = {
+  //       id: generateId(),
+  //       title: addTask,
+  //       done: false,
+  //     };
 
-      setTasks([...tasks, newTask]);
-      if (inputNewTaskRef.current) inputNewTaskRef.current.value = '';
-    },
-    [tasks],
-  );
+  //     setTasks([...tasks, newTask]);
+  //     if (inputNewTaskRef.current) inputNewTaskRef.current.value = '';
+  //   },
+  //   [tasks],
+  // );
 
   const handleDeleteTask = useCallback(
     (taskId: number) => {
@@ -115,8 +137,6 @@ function Todo() {
     },
     [editedTask, tasks],
   );
-
-  console.log(tasks);
 
   return (
     <>
