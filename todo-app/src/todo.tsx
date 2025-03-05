@@ -1,10 +1,25 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import './todo.css';
+import TaskItem from './TaskItem';
 
 type Task = {
   id: number;
   title: string;
   done: boolean;
+};
+
+type AddTaskProps = {
+  inputNewTaskRef: React.RefObject<HTMLInputElement | null>;
+  setTasks: React.Dispatch<
+    React.SetStateAction<
+      {
+        id: number;
+        title: string;
+        done: boolean;
+      }[]
+    >
+  >;
+  tasks: Task[];
 };
 
 let idCounter = 0;
@@ -36,12 +51,11 @@ const generateInitialTasks = () => {
   return initialTasks;
 };
 
-// - добавь в проект eslint, styleint и prettier
-// - добавь команды в package.json что бы запускать проверки через команды (например, npm run lint:css)
-// - сделай так, что бы линт запускался каждый раз при коммите/пуше в репозиторий (husky или lefthook, выбирай в чем быстрее разберешься)
-// - создай еще одну папку закинь туда весь проект но не используй vite, используй webpack
-
-const useHandleAddTask = (inputNewTaskRef, setTasks, tasks) => {
+const useHandleAddTask = ({
+  inputNewTaskRef,
+  setTasks,
+  tasks,
+}: AddTaskProps) => {
   return (e: React.FormEvent) => {
     e.preventDefault();
     const addTask = inputNewTaskRef.current?.value.trim();
@@ -66,27 +80,24 @@ function Todo() {
   const [editingTask, setEditingTask] = useState<number | null>(null);
   const [editedTask, setEditedTask] = useState('');
 
-  const handleChangeDone = useCallback(
-    (taskId: number) => {
-      // Локально меняем состояние дела
-      // 2. на каждый Change Done асинхроно обращаемся к серверу
-      // сымитируем это с помощью setTimeout
-      setTimeout(() => {
-        setTasks((prevState) =>
-          prevState.map((task) =>
-            task.id === taskId ? { ...task, done: !task.done } : task,
-          ),
-        );
-      }, 10000);
+  const handleChangeDone = useCallback((taskId: number) => {
+    setTimeout(() => {
+      setTasks((prevState) =>
+        prevState.map((task) =>
+          task.id === taskId ? { ...task, done: !task.done } : task,
+        ),
+      );
+    }, 10);
+  }, []);
+
+  const handlePersonalNumber = useCallback(
+    (task: Task) => {
+      return tasks.indexOf(task) + 1;
     },
     [tasks],
   );
 
-  const handlePersonalNumber = (task: Task) => {
-    return tasks.indexOf(task) + 1;
-  };
-
-  const handleAddTask = useHandleAddTask(inputNewTaskRef, setTasks, tasks);
+  const handleAddTask = useHandleAddTask({ inputNewTaskRef, setTasks, tasks });
   // const handleAddTask = useCallback(
   //   (e: React.FormEvent) => {
   //     e.preventDefault();
@@ -105,12 +116,9 @@ function Todo() {
   //   [tasks],
   // );
 
-  const handleDeleteTask = useCallback(
-    (taskId: number) => {
-      setTasks(tasks.filter((task) => task.id !== taskId));
-    },
-    [tasks],
-  );
+  const handleDeleteTask = useCallback((taskId: number) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+  }, []);
 
   const handleEditTask = useCallback(
     (taskId: number) => {
@@ -126,8 +134,8 @@ function Todo() {
   const handleSaveTask = useCallback(
     (taskId: number) => {
       if (!editedTask) return;
-      setTasks(
-        tasks.map((task) =>
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
           task.id === taskId ? { ...task, title: editedTask } : task,
         ),
       );
@@ -135,8 +143,34 @@ function Todo() {
       setEditingTask(null);
       setEditedTask('');
     },
-    [editedTask, tasks],
+    [editedTask],
   );
+
+  const taskElements = useMemo(() => {
+    return tasks.map((task) => (
+      <TaskItem
+        key={task.id}
+        task={task}
+        editingTask={editingTask}
+        editedTask={editedTask}
+        handleChangeDone={handleChangeDone}
+        handleEditTask={handleEditTask}
+        handleDeleteTask={handleDeleteTask}
+        handleSaveTask={handleSaveTask}
+        setEditedTask={setEditedTask}
+        handlePersonalNumber={handlePersonalNumber}
+      />
+    ));
+  }, [
+    tasks,
+    editingTask,
+    editedTask,
+    handlePersonalNumber,
+    handleChangeDone,
+    handleEditTask,
+    handleDeleteTask,
+    handleSaveTask,
+  ]);
 
   return (
     <>
@@ -153,73 +187,7 @@ function Todo() {
           </button>
         </form>
 
-        <ul>
-          {tasks.map((task) => (
-            <li key={task.id}>
-              <div className="idDiv">{handlePersonalNumber(task)}</div>
-              {editingTask !== task.id ? (
-                <>
-                  {task.done ? (
-                    <div className="titleDiv checked">{task.title}</div>
-                  ) : (
-                    <div className="titleDiv">{task.title}</div>
-                  )}
-                  <div className="doneDiv">
-                    <input
-                      className="checkbox"
-                      type="checkbox"
-                      checked={task.done}
-                      onChange={() => handleChangeDone(task.id)}
-                    />
-                  </div>
-                  <div className="editDiv">
-                    <button
-                      className="editBtn"
-                      onClick={() => handleEditTask(task.id)}
-                    >
-                      Изменить
-                    </button>
-                  </div>
-                  <div className="deleteDiv">
-                    <button
-                      className="deleteBtn"
-                      onClick={() => handleDeleteTask(task.id)}
-                    >
-                      Удалить
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="titleDiv">
-                    <input
-                      className="editInput"
-                      type="text"
-                      value={editedTask}
-                      onChange={(e) => setEditedTask(e.target.value)}
-                    />
-                  </div>
-                  <div className="editDiv">
-                    <button
-                      className="editBtn"
-                      onClick={() => handleSaveTask(task.id)}
-                    >
-                      Сохранить
-                    </button>
-                  </div>
-                  <div className="deleteDiv">
-                    <button
-                      className="deleteBtn"
-                      onClick={() => handleDeleteTask(task.id)}
-                    >
-                      Удалить
-                    </button>
-                  </div>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
+        <ul>{taskElements}</ul>
       </div>
     </>
   );
